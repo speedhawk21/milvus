@@ -21,7 +21,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def search_vector():
+def search_vector(job_title: str, is_decision_maker: bool, stage_of_sales: str, challenges: str, deal_risk: str, deal_size: str, custom_notes: str, question: str, solution_features: str, key_benefits: str, customization_options: str, integration_points: str):
     llm = OctoAIEndpoint(
         endpoint_url="https://text.octoai.run/v1/chat/completions",
         model_kwargs={
@@ -39,9 +39,13 @@ def search_vector():
         },
     )
 
+    embeddings = OctoAIEmbeddings(
+        endpoint_url="https://text.octoai.run/v1/embeddings")
+
     vector_store = Milvus(
         connection_args={"host": "localhost", "port": 19530},
         collection_name="millertime",
+        embedding_function=embeddings
     )
 
     retriever = vector_store.as_retriever()
@@ -70,18 +74,18 @@ def search_vector():
 
     data = {
         'context': retriever,
-        'job_title': "VP of Marketing",
-        'is_decision_maker': "Yes",
-        'stage_of_sales': "Qualification",
-        'challenges': "Competitor has a better product",
-        'deal_risk': "High",
-        'deal_size': "Large",
-        'custom_notes': "Customer is interested in a long term partnership",
-        'question': "What is the best introduction to a VP of Marketing at coca cola for our Tableau Server product?",
-        'solution_features': "Advanced data visualization, real-time analytics",
-        'key_benefits': "Enhanced decision-making capabilities, increased ROI",
-        'customization_options': "Custom dashboards, branded reports",
-        'integration_points': "CRM integration, social media analytics"
+        'job_title': job_title,
+        'is_decision_maker': is_decision_maker,
+        'stage_of_sales': stage_of_sales,
+        'challenges': challenges,
+        'deal_risk': deal_risk,
+        'deal_size': deal_size,
+        'custom_notes': custom_notes,
+        'question': question,
+        'solution_features': solution_features,
+        'key_benefits': key_benefits,
+        'customization_options': customization_options,
+        'integration_points': integration_points,
     }
 
     chain = (
@@ -91,4 +95,6 @@ def search_vector():
         | StrOutputParser()
     )
 
-    return chain.invoke(data)
+    response = chain.invoke(data)
+
+    return response
