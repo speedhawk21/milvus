@@ -1,11 +1,8 @@
 from dotenv import load_dotenv
-import os
 
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.octoai_endpoint import OctoAIEndpoint
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.schema import Document
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
@@ -14,7 +11,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.embeddings import OctoAIEmbeddings
 from langchain_community.vectorstores import Milvus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from typing import List
 
 router = APIRouter()
