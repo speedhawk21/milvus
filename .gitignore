@@ -1,0 +1,5 @@
+.venv/
+.vscode/
+volumes/
+
+.DS_Store
